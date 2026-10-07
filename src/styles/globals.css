@@ -1,0 +1,15 @@
+/* 1. Saare @import sabse pehle — file ke TOP pe */
+@import './variables.css';
+@import './tailwind.css';
+
+/* 2. Uske baad Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Uske baad normal CSS */
+html, body, #root { height: 100%; }
+body { @apply bg-slate-50 text-slate-800 font-sans antialiased; }
+*:focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
