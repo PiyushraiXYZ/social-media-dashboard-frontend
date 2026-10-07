@@ -1,20 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  jobs: [],
+  status: 'idle', // idle | publishing | success | partial | failed
+  activePostId: null,
+};
+
 const slice = createSlice({
   name: 'publication',
-  initialState: {
-    jobs: [],
-    status: 'idle', // idle | publishing | partial | success | failed
-  },
+  initialState,
   reducers: {
-    setJobs(state, a) { state.jobs = a.payload; },
-    setStatus(state, a) { state.status = a.payload; },
-    updateJob(state, a) {
-      const i = state.jobs.findIndex((j) => j.id === a.payload.id);
-      if (i >= 0) state.jobs[i] = { ...state.jobs[i], ...a.payload };
+    setJobs(state, action) {
+      state.jobs = action.payload;
+    },
+    setStatus(state, action) {
+      state.status = action.payload;
+    },
+    setActivePost(state, action) {
+      state.activePostId = action.payload;
+    },
+    resetPublication(state) {
+      state.jobs = [];
+      state.status = 'idle';
+      state.activePostId = null;
     },
   },
 });
 
-export const { setJobs, setStatus, updateJob } = slice.actions;
+export const {
+  setJobs,
+  setStatus,
+  setActivePost,
+  resetPublication,
+} = slice.actions;
+
 export default slice.reducer;

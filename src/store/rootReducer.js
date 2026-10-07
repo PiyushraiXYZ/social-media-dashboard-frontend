@@ -1,4 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
+
+// ─── Feature reducers ───
 import authReducer from '../features/auth/authSlice.js';
 import workspaceReducer from '../features/workspace/workspaceSlice.js';
 import accountsReducer from '../features/accounts/accountsSlice.js';
@@ -8,6 +10,11 @@ import schedulingReducer from '../features/scheduling/schedulingSlice.js';
 import publicationReducer from '../features/publication/publicationSlice.js';
 import notificationsReducer from '../features/notifications/notificationsSlice.js';
 import brandReducer from '../features/brand/brandSlice.js';
+import adminReducer from '../features/admin/adminSlice.js';
+import aiReducer from '../features/ai/aiSlice.js';
+import superadminReducer from '../features/superadmin/superadminSlice.js';
+
+// ─── RTK Query API client ───
 import { apiClient } from '../lib/apiClient.js';
 
 export const rootReducer = combineReducers({
@@ -20,6 +27,8 @@ export const rootReducer = combineReducers({
   publication: publicationReducer,
   notifications: notificationsReducer,
   brand: brandReducer,
+  admin: adminReducer,
+  ai: aiReducer,
+  superadmin: superadminReducer,
   [apiClient.reducerPath]: apiClient.reducer,
 });
-

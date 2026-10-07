@@ -1,20 +1,50 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  profile: {
+    persona: '',
+    industry: '',
+    brand_name: '',
+    logo_url: '',
+    tone: '',
+    audience: '',
+    country_code: '',
+    language: '',
+    posts_per_week: 3,
+  },
+  footer_url: '',
+  overlay: {
+    text: '',
+    position: 'bottom-center',
+    text_size: 40,
+  },
+  uploadStatus: 'idle', // idle | uploading | success | failed
+};
+
 const slice = createSlice({
   name: 'brand',
-  initialState: {
-    profile: { name: 'Northstar Learning', email: 'maya@northstar.example' },
-    logoUrl: null,
-    footerUrl: null,
-    uploadStatus: 'idle',
-  },
+  initialState,
   reducers: {
-    setProfile(state, a) { state.profile = { ...state.profile, ...a.payload }; },
-    setLogoUrl(state, a) { state.logoUrl = a.payload; },
-    setFooterUrl(state, a) { state.footerUrl = a.payload; },
-    setUploadStatus(state, a) { state.uploadStatus = a.payload; },
+    setProfile(state, action) {
+      state.profile = { ...state.profile, ...action.payload };
+    },
+    setFooter(state, action) {
+      state.footer_url = action.payload;
+    },
+    setOverlay(state, action) {
+      state.overlay = { ...state.overlay, ...action.payload };
+    },
+    setUploadStatus(state, action) {
+      state.uploadStatus = action.payload;
+    },
   },
 });
 
-export const { setProfile, setLogoUrl, setFooterUrl, setUploadStatus } = slice.actions;
+export const {
+  setProfile,
+  setFooter,
+  setOverlay,
+  setUploadStatus,
+} = slice.actions;
+
 export default slice.reducer;

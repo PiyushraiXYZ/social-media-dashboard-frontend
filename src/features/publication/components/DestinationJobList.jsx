@@ -1,27 +1,53 @@
 import { Badge } from '../../../components/ui/Badge/Badge.jsx';
 import { PlatformIcon } from '../../../components/shared/PlatformIcon/PlatformIcon.jsx';
 
-const jobs = [
-  { id: 'fb_123', platform: 'facebook', label: 'Northstar Learning', status: 'Published', detail: 'Image uploaded → post published · fb_ref_123' },
-  { id: 'ig_123', platform: 'instagram', label: '@northstar.learning', status: 'Processing', detail: 'Upload complete · Media container processing' },
-  { id: 'li_123', platform: 'linkedin', label: 'Maya Chen', status: 'Queued', detail: 'Waiting for permission validation' },
-];
+function statusTone(status) {
+  switch (status) {
+    case 'Published':
+      return 'success';
+    case 'Failed':
+      return 'danger';
+    case 'Publishing':
+      return 'progress';
+    default:
+      return 'info';
+  }
+}
 
-export function DestinationJobList() {
+export function DestinationJobList({ platforms = [], status }) {
+  const derivedStatus =
+    status === 'posted'
+      ? 'Published'
+      : status === 'failed'
+      ? 'Failed'
+      : status === 'posting'
+      ? 'Publishing'
+      : 'Queued';
+
   return (
     <ul className="space-y-3">
-      {jobs.map((j) => (
-        <li key={j.id} className="flex items-start justify-between rounded-lg border border-slate-200 p-3">
-          <div className="flex items-start gap-3">
-            <div className="grid h-8 w-8 place-items-center rounded-md bg-slate-100">
-              <PlatformIcon platform={j.platform} />
+      {platforms.map((platform) => (
+        <li
+          key={platform}
+          className="flex items-center justify-between rounded-lg border border-slate-200 p-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-100">
+              <PlatformIcon platform={platform} size={18} />
             </div>
             <div>
-              <div className="text-sm font-medium text-slate-800">{j.label}</div>
-              <div className="text-xs text-slate-500">{j.detail}</div>
+              <div className="text-sm font-medium capitalize text-slate-800">
+                {platform}
+              </div>
+              <div className="text-xs text-slate-500">
+                {derivedStatus === 'Published' && 'Published successfully'}
+                {derivedStatus === 'Publishing' && 'Publishing…'}
+                {derivedStatus === 'Failed' && 'Failed to publish'}
+                {derivedStatus === 'Queued' && 'Waiting…'}
+              </div>
             </div>
           </div>
-          <Badge tone={j.status === 'Published' ? 'success' : j.status === 'Processing' ? 'progress' : 'info'}>{j.status}</Badge>
+          <Badge tone={statusTone(derivedStatus)}>{derivedStatus}</Badge>
         </li>
       ))}
     </ul>

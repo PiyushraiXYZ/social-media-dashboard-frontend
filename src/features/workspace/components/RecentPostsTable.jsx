@@ -1,41 +1,119 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../../../components/ui/Card/Card.jsx';
 import { Table } from '../../../components/ui/Table/Table.jsx';
 import { StatusBadge } from '../../../components/shared/StatusBadge/StatusBadge.jsx';
 import { Button } from '../../../components/ui/Button/Button.jsx';
-import { useNavigate } from 'react-router-dom';
+import { PlatformIcon } from '../../../components/shared/PlatformIcon/PlatformIcon.jsx';
+import { useGetRecentPostsQuery } from '../api.js';
+import { setRecentPosts } from '../workspaceSlice.js';
 import { PATHS } from '../../../routes/routePaths.js';
-
-const rows = [
-  { id: 1, title: 'AI and Machine Learning', ref: 'Post 123 · Image', status: 'Awaiting Approval', when: '06 Oct · 09:30' },
-  { id: 2, title: 'A practical guide to prompt design', ref: 'Illustrative content', status: 'Scheduled', when: '09 Oct · 15:00 UTC' },
-  { id: 3, title: 'Small habits, better learning', ref: 'Illustrative content', status: 'Published', when: '05 Oct · 14:00 UTC' },
-  { id: 4, title: 'Behind the learning studio', ref: 'Illustrative content', status: 'Failed', when: '05 Oct · 11:20 UTC' },
-  { id: 5, title: 'What will you build next?', ref: 'Illustrative content', status: 'Draft', when: '06 Oct · 08:10' },
-];
+import { fmtUTC } from '../../../utils/date.js';
 
 export function RecentPostsTable() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const posts = useSelector((s) => s.workspace.recentPosts || []);
+
+  const { data, isLoading } = useGetRecentPostsQuery();
+
+  useEffect(() => {
+    if (data?.posts) {
+      dispatch(setRecentPosts(data.posts));
+    }
+  }, [data, dispatch]);
+
+  const recent = posts.slice(0, 5);
+
   const columns = [
-    { key: 'title', title: 'Post / Content', render: (r) => (
-      <div>
-        <div className="font-medium text-slate-800">{r.title}</div>
-        <div className="text-xs text-slate-500">Northstar Learning · {r.ref}</div>
-      </div>
-    )},
-    { key: 'dest', title: 'Destinations', render: () => <span className="text-xs text-slate-500">f ◉</span> },
-    { key: 'status', title: 'Status', render: (r) => <StatusBadge status={r.status} /> },
-    { key: 'when', title: 'Activity / Schedule', render: (r) => <span className="text-xs text-slate-500">{r.when}</span> },
-    { key: 'action', title: 'Action', render: (r) => (
-      <Button variant="ghost" size="sm" onClick={() => navigate(PATHS.postEditor(r.id))}>View →</Button>
-    )},
+    {
+      key: 'title',
+      title: 'Post / Content',
+      render: (r) => (
+        <div className="max-w-xs">
+          <div className="truncate text-sm font-medium text-slate-800">
+            {r.content_text || r.title || 'Untitled'}
+          </div>
+          <div className="text-xs text-slate-500">
+            Post #{r.id}
+            {r.platforms?.length > 0 &&
+              ` · ${r.platforms.join(', ')}`}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'dest',
+      title: 'Destinations',
+      render: (r) => (
+        <div className="flex items-center gap-1">
+          {(r.platforms || []).map((p) => (
+            <PlatformIcon key={p} platform={p} size={12} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      render: (r) => <StatusBadge status={r.status || 'Draft'} />,
+    },
+    {
+      key: 'when',
+      title: 'Activity / Schedule',
+      render: (r) => (
+        <span className="text-xs text-slate-500">
+          {r.scheduled_at
+            ? fmtUTC(r.scheduled_at)
+            : r.updated_at
+            ? fmtUTC(r.updated_at)
+            : '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'action',
+      title: 'Action',
+      render: (r) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(PATHS.postEditor(r.id))}
+        >
+          View →
+        </Button>
+      ),
+    },
   ];
+
   return (
     <Card
       title="Recent posts"
       subtitle="Operational status, not engagement analytics."
-      actions={<Button variant="ghost" size="sm">View all posts</Button>}
+      actions={
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(PATHS.posts)}
+        >
+          View all posts
+        </Button>
+      }
     >
-      <Table columns={columns} rows={rows} />
+      {isLoading && (
+        <div className="p-6 text-sm text-slate-500">Loading…</div>
+      )}
+
+      {!isLoading && recent.length === 0 && (
+        <div className="p-6 text-sm text-slate-500">
+          No posts yet. Create your first draft.
+        </div>
+      )}
+
+      {recent.length > 0 && (
+        <Table columns={columns} rows={recent} />
+      )}
     </Card>
   );
 }

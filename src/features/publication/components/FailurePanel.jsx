@@ -2,25 +2,28 @@ import { Card } from '../../../components/ui/Card/Card.jsx';
 import { Button } from '../../../components/ui/Button/Button.jsx';
 import { Badge } from '../../../components/ui/Badge/Badge.jsx';
 
-export function FailurePanel() {
-  const items = [
-    { name: 'Facebook', err: 'EXTERNAL_API_ERROR', msg: 'The platform rejected this publishing request.' },
-    { name: 'Instagram', err: 'MEDIA_CONTAINER_TIMEOUT', msg: 'The media container did not become ready.' },
-    { name: 'LinkedIn', err: 'RATE_LIMIT', msg: 'The platform temporarily limited requests.' },
-  ];
+export function FailurePanel({ post, onNavigate }) {
+  const platforms = post?.platforms || [];
+
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
-      {items.map((i) => (
-        <Card key={i.name}>
+    <div className="grid gap-4 lg:grid-cols-2">
+      {platforms.map((p) => (
+        <Card key={p}>
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold">{i.name}</div>
+            <div className="text-sm font-semibold capitalize">{p}</div>
             <Badge tone="danger">Failed</Badge>
           </div>
-          <div className="mt-2 text-xs text-slate-500">{i.err}</div>
-          <p className="mt-2 text-sm text-slate-600">{i.msg}</p>
+          <p className="mt-2 text-xs text-slate-600">
+            {post?.rejection_reason ||
+              'Publishing was not successful. Please check platform permissions and retry.'}
+          </p>
           <div className="mt-3 flex gap-2">
-            <Button variant="ghost" size="sm">Review</Button>
-            <Button size="sm">Retry</Button>
+            <Button variant="ghost" size="sm" onClick={() => onNavigate('posts')}>
+              Back to posts
+            </Button>
+            <Button size="sm" onClick={() => onNavigate('retry')}>
+              Retry
+            </Button>
           </div>
         </Card>
       ))}

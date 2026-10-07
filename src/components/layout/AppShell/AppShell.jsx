@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../Sidebar/Sidebar.jsx';
 import { Topbar } from '../Topbar/Topbar.jsx';
+import { AIChatWidget } from '../../../features/ai/components/AIChatWidget.jsx';
 
 export function AppShell() {
   return (
@@ -12,6 +13,9 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+
+      {/* ⭐ Global AI Assistant */}
+      <AIChatWidget />
     </div>
   );
 }

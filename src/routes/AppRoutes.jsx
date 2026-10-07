@@ -41,6 +41,12 @@ import { ActivityDetailPage } from '../features/publication/pages/ActivityDetail
 import { NotificationsPage } from '../features/notifications/pages/NotificationsPage.jsx';
 import { BrandSettingsPage } from '../features/brand/pages/BrandSettingsPage.jsx';
 
+// ⭐ Admin
+import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
+
+// ⭐ SuperAdmin
+import { SuperAdminDashboardPage } from '../features/superadmin/pages/SuperAdminDashboardPage.jsx';
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -48,12 +54,8 @@ export function AppRoutes() {
       <Route element={<AuthLayout />}>
         <Route path={PATHS.login} element={<LoginPage />} />
         <Route path={PATHS.register} element={<RegisterPage />} />
-        {/* Kept for reference — not part of active flow */}
         <Route path={PATHS.confirmEmail} element={<ConfirmEmailPage />} />
-        <Route
-          path={PATHS.confirmEmailSuccess}
-          element={<ConfirmEmailPage />}
-        />
+        <Route path={PATHS.confirmEmailSuccess} element={<ConfirmEmailPage />} />
       </Route>
 
       {/* ─── App (protected) ─── */}
@@ -68,53 +70,61 @@ export function AppRoutes() {
         <Route path={PATHS.overview} element={<WorkspaceOverviewPage />} />
         <Route path={PATHS.firstUse} element={<FirstUsePage />} />
 
+        {/* Posts */}
         <Route path={PATHS.posts} element={<PostsListPage />} />
         <Route path={PATHS.createPost} element={<CreatePostPage />} />
-        <Route path={PATHS.generation()} element={<GenerationStatusPage />} />
-        <Route path={PATHS.postEditor()} element={<PostEditorPage />} />
-        <Route path={PATHS.branding()} element={<BrandingEditorPage />} />
+        <Route
+          path="/posts/generation/:taskId"
+          element={<GenerationStatusPage />}
+        />
+        <Route path="/posts/:postId/edit" element={<PostEditorPage />} />
+        <Route path="/posts/:postId/branding" element={<BrandingEditorPage />} />
 
+        {/* Approval */}
         <Route path={PATHS.approval} element={<ApprovalCenterPage />} />
         <Route
-          path={PATHS.approvalRequest()}
+          path="/approval-center/:postId/request"
           element={<RequestApprovalPage />}
         />
         <Route
-          path={PATHS.approvalDecision()}
+          path="/approval-center/:postId/decision"
           element={<ApprovalDecisionPage />}
         />
         <Route
-          path={PATHS.approvalExpired()}
+          path="/approval-center/:postId/expired"
           element={<ExpiredApprovalPage />}
         />
 
+        {/* Scheduling */}
         <Route path={PATHS.calendar} element={<CalendarPage />} />
         <Route
-          path={PATHS.scheduleDateTime()}
+          path="/calendar/schedule/:postId"
           element={<ScheduleDateTimePage />}
         />
         <Route
-          path={PATHS.scheduleConfirm()}
+          path="/calendar/schedule/:postId/confirm"
           element={<ScheduleConfirmationPage />}
         />
 
+        {/* Publication */}
         <Route
-          path={PATHS.publishConfirm()}
+          path="/publish/:postId/confirm"
           element={<PublishConfirmPage />}
         />
         <Route
-          path={PATHS.publishProgress()}
+          path="/publish/:postId/progress"
           element={<PublicationProgressPage />}
         />
         <Route
-          path={PATHS.publishResult()}
+          path="/publish/:postId/result"
           element={<PublicationResultPage />}
         />
         <Route
-          path={PATHS.publishActivity()}
+          path="/publish/:postId/activity"
           element={<ActivityDetailPage />}
         />
 
+        {/* Accounts */}
         <Route path={PATHS.accounts} element={<SocialAccountsPage />} />
         <Route
           path={PATHS.facebookSelect}
@@ -133,8 +143,18 @@ export function AppRoutes() {
           element={<ConnectionRecoveryPage />}
         />
 
+        {/* Misc */}
         <Route path={PATHS.notifications} element={<NotificationsPage />} />
         <Route path={PATHS.brandSettings} element={<BrandSettingsPage />} />
+
+        {/* ⭐ Admin */}
+        <Route path={PATHS.admin} element={<AdminDashboardPage />} />
+
+        {/* ⭐ SuperAdmin */}
+        <Route
+          path={PATHS.superadmin}
+          element={<SuperAdminDashboardPage />}
+        />
       </Route>
 
       <Route path="*" element={<Navigate to={PATHS.overview} replace />} />

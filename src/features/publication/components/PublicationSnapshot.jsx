@@ -1,1 +1,1 @@
-export { ApprovalPreview as PublicationSnapshot } from '../../approval/components/ApprovalPreview.jsx';
+export { PublishConfirmPage as PublicationSnapshot } from '../pages/PublishConfirmPage.jsx';

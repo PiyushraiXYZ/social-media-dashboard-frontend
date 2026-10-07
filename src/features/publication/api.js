@@ -2,15 +2,27 @@ import { apiClient } from '../../lib/apiClient.js';
 
 export const publicationApi = apiClient.injectEndpoints({
   endpoints: (b) => ({
+    // ─── PUBLISH ───
     publishPost: b.mutation({
-      query: (body) => ({ url: '/publications', method: 'POST', body }),
-      invalidatesTags: ['Publication', 'Post'],
+      query: (postId) => ({
+        url: `/posts/${postId}/publish`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Post'],
     }),
-    getPublication: b.query({ query: (id) => `/publications/${id}`, providesTags: ['Publication'] }),
-    retryDestination: b.mutation({
-      query: ({ id, destination }) => ({ url: `/publications/${id}/retry/${destination}`, method: 'POST' }),
+
+    // ─── RETRY ───
+    retryPost: b.mutation({
+      query: (postId) => ({
+        url: `/posts/${postId}/retry`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Post'],
     }),
   }),
 });
 
-export const { usePublishPostMutation, useGetPublicationQuery, useRetryDestinationMutation } = publicationApi;
+export const {
+  usePublishPostMutation,
+  useRetryPostMutation,
+} = publicationApi;

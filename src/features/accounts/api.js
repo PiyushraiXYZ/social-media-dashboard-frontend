@@ -2,20 +2,38 @@ import { apiClient } from '../../lib/apiClient.js';
 
 export const accountsApi = apiClient.injectEndpoints({
   endpoints: (b) => ({
-    listAccounts: b.query({ query: () => '/accounts', providesTags: ['Account'] }),
-    discoverPages: b.query({ query: () => '/accounts/facebook/pages', providesTags: ['Account'] }),
-    discoverInstagram: b.query({ query: () => '/accounts/instagram/accounts', providesTags: ['Account'] }),
-    connectFacebookPage: b.mutation({ query: (body) => ({ url: '/accounts/facebook/connect', method: 'POST', body }), invalidatesTags: ['Account'] }),
-    connectInstagram: b.mutation({ query: (body) => ({ url: '/accounts/instagram/connect', method: 'POST', body }), invalidatesTags: ['Account'] }),
-    connectLinkedIn: b.mutation({ query: () => ({ url: '/accounts/linkedin/connect', method: 'POST' }), invalidatesTags: ['Account'] }),
+    // Quick status — { facebook: "connected"|"not connected", ... }
+    getPlatformStatus: b.query({
+      query: () => '/platforms/status',
+      providesTags: ['Account'],
+    }),
+
+    // Full account info — name, followers, etc.
+    getPlatformAccounts: b.query({
+      query: () => '/platforms/accounts',
+      providesTags: ['Account'],
+    }),
+
+    // ⭐ Facebook OAuth — supports ?force=true for re-authorization
+    // Instagram uses this SAME endpoint with force=true
+    // because Instagram is managed through Meta.
+    connectFacebook: b.query({
+      query: (opts = {}) => {
+        const force = opts.force ? '?force=true' : '';
+        return `/auth/facebook/connect${force}`;
+      },
+    }),
+
+    // LinkedIn OAuth
+    connectLinkedIn: b.query({
+      query: () => '/auth/linkedin/connect',
+    }),
   }),
 });
 
 export const {
-  useListAccountsQuery,
-  useDiscoverPagesQuery,
-  useDiscoverInstagramQuery,
-  useConnectFacebookPageMutation,
-  useConnectInstagramMutation,
-  useConnectLinkedInMutation,
+  useGetPlatformStatusQuery,
+  useGetPlatformAccountsQuery,
+  useLazyConnectFacebookQuery,
+  useLazyConnectLinkedInQuery,
 } = accountsApi;
