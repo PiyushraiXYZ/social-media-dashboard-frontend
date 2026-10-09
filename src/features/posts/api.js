@@ -2,9 +2,16 @@ import { apiClient } from '../../lib/apiClient.js';
 
 export const postsApi = apiClient.injectEndpoints({
   endpoints: (b) => ({
-    // ─── LIST + DETAILS ────────────────────────────
+
+    // ─────────────────────────────────────────────
+    // LIST + DETAILS
+    // ─────────────────────────────────────────────
+
     listPosts: b.query({
-      query: (status) => (status ? `/posts/?status=${status}` : '/posts/'),
+      query: (status) =>
+        status
+          ? `/posts/?status=${status}`
+          : '/posts/',
       providesTags: ['Post'],
     }),
 
@@ -15,10 +22,18 @@ export const postsApi = apiClient.injectEndpoints({
 
     getPost: b.query({
       query: (id) => `/posts/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Post', id }],
+      providesTags: (result, error, id) => [
+        {
+          type: 'Post',
+          id,
+        },
+      ],
     }),
 
-    // ─── CRUD ──────────────────────────────────────
+    // ─────────────────────────────────────────────
+    // CRUD
+    // ─────────────────────────────────────────────
+
     createPost: b.mutation({
       query: (body) => ({
         url: '/posts/',
@@ -45,7 +60,10 @@ export const postsApi = apiClient.injectEndpoints({
       invalidatesTags: ['Post'],
     }),
 
-    // ─── LIFECYCLE ACTIONS ─────────────────────────
+    // ─────────────────────────────────────────────
+    // LIFECYCLE ACTIONS
+    // ─────────────────────────────────────────────
+
     publishNow: b.mutation({
       query: (id) => ({
         url: `/posts/${id}/publish`,
@@ -70,39 +88,62 @@ export const postsApi = apiClient.injectEndpoints({
       invalidatesTags: ['Post'],
     }),
 
-    // ─── AI GENERATION ─────────────────────────────
+    // ─────────────────────────────────────────────
+    // AI GENERATION
+    // ─────────────────────────────────────────────
+
     generatePost: b.mutation({
       query: (body) => ({
         url: '/posts/generate',
         method: 'POST',
+
         body: {
           title: body.title,
-          platform: body.platform,
-          generate_image: Boolean(body.generate_image),
-          scheduled_at: body.scheduled_at,
+
+          // IMPORTANT:
+          // Backend expects "platforms", not "platform"
+          platforms: body.platforms,
+
+          generate_image: Boolean(
+            body.generate_image
+          ),
+
+          scheduled_at:
+            body.scheduled_at,
         },
       }),
     }),
 
     getGenerateStatus: b.query({
-      query: (taskId) => `/posts/generate/status/${taskId}`,
+      query: (taskId) =>
+        `/posts/generate/status/${taskId}`,
     }),
 
-    // ⭐ UPLOAD USER'S OWN MEDIA (for manual post creation)
+    // ─────────────────────────────────────────────
+    // UPLOAD USER MEDIA
+    // ─────────────────────────────────────────────
+
     uploadPostMedia: b.mutation({
       query: (file) => {
-        const fd = new FormData();
-        fd.append('file', file);
+        const formData = new FormData();
+
+        formData.append(
+          'file',
+          file
+        );
+
         return {
           url: '/media/upload',
           method: 'POST',
-          body: fd,
-          // Response: { success, url, public_id, resource_type, format, width, height, duration, size_bytes }
+          body: formData,
         };
       },
     }),
 
-    // ─── REPOST / PREVIEW ──────────────────────────
+    // ─────────────────────────────────────────────
+    // REPOST / PREVIEW
+    // ─────────────────────────────────────────────
+
     repost: b.mutation({
       query: ({ id, ...body }) => ({
         url: `/posts/${id}/repost`,
@@ -113,10 +154,14 @@ export const postsApi = apiClient.injectEndpoints({
     }),
 
     previewPost: b.query({
-      query: (id) => `/posts/${id}/preview`,
+      query: (id) =>
+        `/posts/${id}/preview`,
     }),
 
-    // ─── TEMPLATE PAUSE/RESUME ─────────────────────
+    // ─────────────────────────────────────────────
+    // TEMPLATE PAUSE / RESUME
+    // ─────────────────────────────────────────────
+
     pauseTemplate: b.mutation({
       query: (templateId) => ({
         url: `/templates/${templateId}/pause`,
@@ -135,22 +180,32 @@ export const postsApi = apiClient.injectEndpoints({
   }),
 });
 
+// ─────────────────────────────────────────────
+// EXPORT HOOKS
+// ─────────────────────────────────────────────
+
 export const {
   useListPostsQuery,
   useUpcomingPostsQuery,
   useGetPostQuery,
+
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+
   usePublishNowMutation,
   useSkipPostMutation,
   useRetryPostMutation,
+
   useGeneratePostMutation,
   useGetGenerateStatusQuery,
   useLazyGetGenerateStatusQuery,
-  useUploadPostMediaMutation,        // ⭐ NEW
+
+  useUploadPostMediaMutation,
+
   useRepostMutation,
   usePreviewPostQuery,
+
   usePauseTemplateMutation,
   useResumeTemplateMutation,
 } = postsApi;
