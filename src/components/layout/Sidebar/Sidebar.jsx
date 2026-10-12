@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   Home,
+  Building2,
   FileText,
   CheckSquare,
   Calendar,
@@ -22,6 +23,7 @@ export function Sidebar() {
 
   const items = [
     { to: PATHS.overview, label: 'Overview', icon: Home },
+    { to: PATHS.brands, label: 'Brands', icon: Building2 },      // ⭐ NEW
     { to: PATHS.posts, label: 'Posts', icon: FileText },
     { to: PATHS.approval, label: 'Approval Center', icon: CheckSquare },
     { to: PATHS.calendar, label: 'Calendar', icon: Calendar },
@@ -29,7 +31,7 @@ export function Sidebar() {
     { to: PATHS.notifications, label: 'Notifications', icon: Bell },
     { to: PATHS.brandSettings, label: 'Brand settings', icon: Settings },
 
-    // ⭐ Admin ONLY (not superadmin — they get SuperAdmin panel)
+    // ⭐ Admin ONLY
     ...(isAdmin
       ? [{ to: PATHS.admin, label: 'Admin Panel', icon: Shield }]
       : []),

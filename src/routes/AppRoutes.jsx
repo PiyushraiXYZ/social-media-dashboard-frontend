@@ -41,6 +41,9 @@ import { ActivityDetailPage } from '../features/publication/pages/ActivityDetail
 import { NotificationsPage } from '../features/notifications/pages/NotificationsPage.jsx';
 import { BrandSettingsPage } from '../features/brand/pages/BrandSettingsPage.jsx';
 
+// ⭐ Brands (multiple brands management)
+import { BrandsListPage } from '../features/brands/pages/BrandsListPage.jsx';
+
 // ⭐ Admin
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 
@@ -69,6 +72,9 @@ export function AppRoutes() {
         <Route path="/" element={<Navigate to={PATHS.overview} replace />} />
         <Route path={PATHS.overview} element={<WorkspaceOverviewPage />} />
         <Route path={PATHS.firstUse} element={<FirstUsePage />} />
+
+        {/* ⭐ Brands */}
+        <Route path={PATHS.brands} element={<BrandsListPage />} />
 
         {/* Posts */}
         <Route path={PATHS.posts} element={<PostsListPage />} />

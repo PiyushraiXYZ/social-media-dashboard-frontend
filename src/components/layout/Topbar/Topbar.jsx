@@ -1,10 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import {
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Building2,
+} from 'lucide-react';
 import { logout, selectUser } from '../../../features/auth/authSlice.js';
 import { initials } from '../../../utils/format.js';
 import { PATHS } from '../../../routes/routePaths.js';
+import { BrandSwitcher } from '../../../features/brands/components/BrandSwitcher.jsx';
 
 export function Topbar() {
   const navigate = useNavigate();
@@ -14,7 +21,7 @@ export function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
-  // Close on outside click
+  // Close user menu on outside click
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -25,7 +32,7 @@ export function Topbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
-  // Close on ESC
+  // Close user menu on ESC
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'Escape') setMenuOpen(false);
@@ -36,6 +43,8 @@ export function Topbar() {
 
   const handleLogout = () => {
     setMenuOpen(false);
+    // Clear active brand on logout
+    localStorage.removeItem('socialdesk_active_brand');
     dispatch(logout());
     navigate(PATHS.login, { replace: true });
   };
@@ -47,8 +56,12 @@ export function Topbar() {
 
   return (
     <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
-      <div className="text-sm text-slate-500">Workspace</div>
+      {/* ═══ LEFT: Brand Switcher ═══ */}
+      <div className="flex items-center gap-4">
+        <BrandSwitcher />
+      </div>
 
+      {/* ═══ RIGHT: User Menu ═══ */}
       <div className="relative" ref={menuRef}>
         <button
           onClick={() => setMenuOpen((v) => !v)}
@@ -82,6 +95,7 @@ export function Topbar() {
             role="menu"
             className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
           >
+            {/* User info */}
             <div className="border-b border-slate-100 px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
@@ -103,6 +117,7 @@ export function Topbar() {
               )}
             </div>
 
+            {/* Menu items */}
             <div className="py-1">
               <button
                 onClick={() => handleNavigate(PATHS.brandSettings)}
@@ -121,8 +136,18 @@ export function Topbar() {
                 <Settings size={14} className="text-slate-400" />
                 Brand settings
               </button>
+
+              <button
+                onClick={() => handleNavigate(PATHS.brands)}
+                className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
+                role="menuitem"
+              >
+                <Building2 size={14} className="text-slate-400" />
+                Manage brands
+              </button>
             </div>
 
+            {/* Logout */}
             <div className="border-t border-slate-100 py-1">
               <button
                 onClick={handleLogout}

@@ -13,6 +13,7 @@ import brandReducer from '../features/brand/brandSlice.js';
 import adminReducer from '../features/admin/adminSlice.js';
 import aiReducer from '../features/ai/aiSlice.js';
 import superadminReducer from '../features/superadmin/superadminSlice.js';
+import brandsReducer from '../features/brands/brandSlice.js';           // ⭐ NEW
 
 // ─── RTK Query API client ───
 import { apiClient } from '../lib/apiClient.js';
@@ -30,5 +31,6 @@ export const rootReducer = combineReducers({
   admin: adminReducer,
   ai: aiReducer,
   superadmin: superadminReducer,
+  brands: brandsReducer,                                                // ⭐ NEW
   [apiClient.reducerPath]: apiClient.reducer,
 });

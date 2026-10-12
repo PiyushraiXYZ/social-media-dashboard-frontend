@@ -2,31 +2,56 @@ import { apiClient } from '../../lib/apiClient.js';
 
 export const accountsApi = apiClient.injectEndpoints({
   endpoints: (b) => ({
-    // Quick status — { facebook: "connected"|"not connected", ... }
+    // ─── USER-SCOPED (legacy, kept for compatibility) ───
     getPlatformStatus: b.query({
       query: () => '/platforms/status',
       providesTags: ['Account'],
     }),
 
-    // Full account info — name, followers, etc.
     getPlatformAccounts: b.query({
       query: () => '/platforms/accounts',
       providesTags: ['Account'],
     }),
 
-    // ⭐ Facebook OAuth — supports ?force=true for re-authorization
-    // Instagram uses this SAME endpoint with force=true
-    // because Instagram is managed through Meta.
+    // ⭐ BRAND-SCOPED ACCOUNTS
+    // Returns only accounts belonging to the specified brand.
+    // Response shape:
+    //   {
+    //     brand_id: 2,
+    //     accounts: {
+    //       facebook: [{ id, connected, page_id, name, followers }],
+    //       instagram: [...],
+    //       linkedin: [...]
+    //     }
+    //   }
+    getBrandSocialAccounts: b.query({
+      query: (brandId) => `/platforms/brands/${brandId}/accounts`,
+      providesTags: (result, error, brandId) => [
+        { type: 'Account', id: `brand-${brandId}` },
+      ],
+    }),
+
+    // ─── OAUTH CONNECT ───
+    // If brandId provided → brand-scoped OAuth
+    // Otherwise → user-scoped (legacy fallback)
     connectFacebook: b.query({
-      query: (opts = {}) => {
-        const force = opts.force ? '?force=true' : '';
-        return `/auth/facebook/connect${force}`;
+      query: ({ brandId = null, force = false } = {}) => {
+        const forceParam = force ? '?force=true' : '';
+
+        if (brandId) {
+          return `/auth/facebook/brands/${brandId}/connect${forceParam}`;
+        }
+        return `/auth/facebook/connect${forceParam}`;
       },
     }),
 
-    // LinkedIn OAuth
     connectLinkedIn: b.query({
-      query: () => '/auth/linkedin/connect',
+      query: ({ brandId = null } = {}) => {
+        if (brandId) {
+          return `/auth/linkedin/brands/${brandId}/connect`;
+        }
+        return `/auth/linkedin/connect`;
+      },
     }),
   }),
 });
@@ -34,6 +59,7 @@ export const accountsApi = apiClient.injectEndpoints({
 export const {
   useGetPlatformStatusQuery,
   useGetPlatformAccountsQuery,
+  useGetBrandSocialAccountsQuery,        // ⭐ NEW
   useLazyConnectFacebookQuery,
   useLazyConnectLinkedInQuery,
 } = accountsApi;

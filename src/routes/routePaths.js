@@ -9,6 +9,11 @@ export const PATHS = {
   overview: '/overview',
   firstUse: '/overview/first-use',
 
+  // ─── Brands ───                              ⭐ NEW BLOCK
+  brands: '/brands',
+  brandCreate: '/brands/new',
+  brandDetail: (id = ':brandId') => `/brands/${id}`,
+
   // ─── Posts ───
   posts: '/posts',
   createPost: '/posts/new',
@@ -47,6 +52,6 @@ export const PATHS = {
   // ─── Admin ───
   admin: '/admin',
 
-  // SuperAdmin
+  // ─── SuperAdmin ───
   superadmin: '/superadmin',
 };
