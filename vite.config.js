@@ -17,10 +17,10 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
-    allowedHosts: ['social-media-dashboard-frontend-2.onrender.com'],
+    allowedHosts: true,
   },
   preview: {
-    allowedHosts: ['social-media-dashboard-frontend-2.onrender.com'],
+    allowedHosts: true,
   },
   test: {
     environment: 'jsdom',
