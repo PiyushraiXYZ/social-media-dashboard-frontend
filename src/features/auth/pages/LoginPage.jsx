@@ -15,6 +15,12 @@ import {
 } from '../authSlice.js';
 import { PATHS } from '../../../routes/routePaths.js';
 
+const ROLES = [
+  { value: 'user', label: 'User' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'superadmin', label: 'Super Admin' },
+];
+
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,15 +31,20 @@ export function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      role: 'user',
       keepSignedIn: true,
     },
   });
+
+  const selectedRole = watch('role');
 
   const redirectTo = location.state?.from?.pathname || PATHS.overview;
 
@@ -43,6 +54,7 @@ export function LoginPage() {
       const res = await login({
         email: values.email,
         password: values.password,
+        role: values.role,
       }).unwrap();
 
       persistAuth(res, values.keepSignedIn);
@@ -80,6 +92,49 @@ export function LoginPage() {
         className="mt-6 space-y-4"
         noValidate
       >
+        {/* Role selector */}
+        <div>
+          <span className="block text-sm font-medium text-slate-700 mb-2">
+            Sign in as
+          </span>
+          <div
+            role="radiogroup"
+            aria-label="Select login role"
+            className="grid grid-cols-3 gap-2"
+          >
+            {ROLES.map((r) => {
+              const isActive = selectedRole === r.value;
+              return (
+                <button
+                  type="button"
+                  key={r.value}
+                  role="radio"
+                  aria-checked={isActive}
+                  onClick={() =>
+                    setValue('role', r.value, { shouldValidate: true })
+                  }
+                  className={[
+                    'px-3 py-2 rounded-lg text-sm font-medium border transition',
+                    'focus:outline-none focus:ring-2 focus:ring-brand-500/40',
+                    isActive
+                      ? 'bg-brand-600 text-white border-brand-600 shadow-sm'
+                      : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50',
+                  ].join(' ')}
+                >
+                  {r.label}
+                </button>
+              );
+            })}
+          </div>
+          {/* Hidden input so RHF registers the field */}
+          <input type="hidden" {...register('role')} />
+          {errors.role?.message && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.role.message}
+            </p>
+          )}
+        </div>
+
         <Input
           label="Work email"
           type="email"
@@ -112,7 +167,9 @@ export function LoginPage() {
           className="w-full justify-center"
           disabled={isLoading}
         >
-          {isLoading ? 'Signing in…' : 'Sign in'}
+          {isLoading
+            ? 'Signing in…'
+            : `Sign in as ${ROLES.find((r) => r.value === selectedRole)?.label ?? ''}`}
         </Button>
       </form>
 

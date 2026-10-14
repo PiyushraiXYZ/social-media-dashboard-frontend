@@ -9,6 +9,7 @@ export const authApi = apiClient.injectEndpoints({
         body: {
           email: body.email,
           password: body.password,
+          role: body.role,
         },
       }),
     }),
@@ -20,8 +21,8 @@ export const authApi = apiClient.injectEndpoints({
         body: {
           email: body.email,
           password: body.password,
-          role: body.role || 'superadmin',        // ⭐ Default superadmin
-          timezone: body.timezone || 'UTC',       // ⭐ Add timezone
+          role: body.role || 'superadmin',
+          timezone: body.timezone || 'UTC',
           invite_code: body.inviteCode || undefined,
           admin_email: body.adminEmail || undefined,
         },

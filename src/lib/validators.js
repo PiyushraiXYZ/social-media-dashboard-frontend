@@ -3,6 +3,9 @@ import { z } from 'zod';
 export const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Enter a valid email'),
   password: z.string().min(1, 'Password is required'),
+  role: z.enum(['user', 'admin', 'superadmin'], {
+    errorMap: () => ({ message: 'Please select a role' }),
+  }),
   keepSignedIn: z.boolean().optional(),
 });
 
@@ -17,8 +20,8 @@ export const registerSchema = z
       .min(8, 'Password must be at least 8 characters')
       .max(72, 'Password is too long'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
-    timezone: z.string().default('UTC'),                    // ⭐ NEW
-    inviteCode: z.string().optional().or(z.literal('')),
+    timezone: z.string().optional().default('UTC'),
+    inviteCode: z.string().optional(),
     keepSignedIn: z.boolean().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
