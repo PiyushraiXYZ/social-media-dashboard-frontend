@@ -32,6 +32,7 @@ export function RegisterPage() {
       email: '',
       password: '',
       confirmPassword: '',
+      timezone: 'UTC',
       inviteCode: '',
       keepSignedIn: true,
     },
@@ -43,14 +44,16 @@ export function RegisterPage() {
       const res = await registerUser({
         email: values.email,
         password: values.password,
+        timezone: values.timezone,
+        role: 'superadmin',                    // ⭐ Hardcoded
         inviteCode: values.inviteCode,
       }).unwrap();
 
       persistAuth(res, values.keepSignedIn);
       dispatch(setCredentials(res));
 
-      // New users → first-use experience
-      navigate(PATHS.firstUse, { replace: true });
+      // ⭐ SuperAdmin → /superadmin dashboard
+      navigate(PATHS.superadmin, { replace: true });
     } catch (err) {
       const message =
         err?.data?.detail ||
@@ -69,6 +72,12 @@ export function RegisterPage() {
       <p className="mt-1 text-sm text-slate-500">
         Set up your SocialDesk workspace in a few seconds.
       </p>
+
+      {/* Info banner */}
+      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        ℹ️ New accounts are created as <strong>SuperAdmin</strong>. This
+        action is restricted to internal team only.
+      </div>
 
       {serverError && (
         <div className="mt-4">
@@ -110,6 +119,22 @@ export function RegisterPage() {
           error={errors.confirmPassword?.message}
         />
 
+        {/* Timezone */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-slate-700">
+            Timezone
+          </label>
+          <select className="input" {...register('timezone')}>
+            <option value="UTC">UTC</option>
+            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+            <option value="America/New_York">America/New_York (EST)</option>
+            <option value="Europe/London">Europe/London (GMT)</option>
+            <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+            <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+          </select>
+        </div>
+
+        {/* Invite code — optional */}
         <div>
           <button
             type="button"
@@ -145,7 +170,7 @@ export function RegisterPage() {
           className="w-full justify-center"
           disabled={isLoading}
         >
-          {isLoading ? 'Creating account…' : 'Create account'}
+          {isLoading ? 'Creating account…' : 'Create SuperAdmin account'}
         </Button>
       </form>
 

@@ -17,6 +17,7 @@ export const registerSchema = z
       .min(8, 'Password must be at least 8 characters')
       .max(72, 'Password is too long'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
+    timezone: z.string().default('UTC'),                    // ⭐ NEW
     inviteCode: z.string().optional().or(z.literal('')),
     keepSignedIn: z.boolean().optional(),
   })
