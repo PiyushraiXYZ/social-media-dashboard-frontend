@@ -47,11 +47,16 @@ export function AssetUploader() {
 
   return (
     <Card title="Company assets">
-      <div className="space-y-4">
-        {/* Logo */}
+      <div className="space-y-3">
+        {/* ─── Logo ─── */}
         <div>
-          <div className="mb-2 text-sm font-medium text-slate-700">
-            Logo (PNG / JPG / WebP · max 5MB)
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-700">
+              Logo
+            </span>
+            <span className="text-[10px] text-slate-400">
+              PNG · JPG · WebP · 5MB
+            </span>
           </div>
           <FileUpload
             label={logoLoading ? 'Uploading…' : 'Upload logo'}
@@ -63,15 +68,20 @@ export function AssetUploader() {
             <img
               src={profile.logo_url}
               alt="logo"
-              className="mt-2 h-16 rounded border border-slate-200"
+              className="mt-1.5 h-12 rounded border border-slate-200"
             />
           )}
         </div>
 
-        {/* Footer */}
+        {/* ─── Footer ─── */}
         <div>
-          <div className="mb-2 text-sm font-medium text-slate-700">
-            Footer (PNG / JPG / WebP · max 5MB)
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-700">
+              Footer
+            </span>
+            <span className="text-[10px] text-slate-400">
+              PNG · JPG · WebP · 5MB
+            </span>
           </div>
           <FileUpload
             label={footerLoading ? 'Uploading…' : 'Upload footer'}
@@ -83,12 +93,12 @@ export function AssetUploader() {
             <img
               src={footerUrl}
               alt="footer"
-              className="mt-2 h-16 rounded border border-slate-200"
+              className="mt-1.5 h-12 rounded border border-slate-200"
             />
           )}
         </div>
 
-        {/* Feedback */}
+        {/* ─── Feedback ─── */}
         {uploadStatus === 'success' && (
           <Alert tone="success">Upload successful ✅</Alert>
         )}

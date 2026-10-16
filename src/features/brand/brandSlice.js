@@ -11,14 +11,24 @@ const initialState = {
     country_code: '',
     language: '',
     posts_per_week: 3,
+    logo_size: 60,
+    logo_position_x: 4,
+    logo_position_y: 4,
+    footer_height: 60,
+    footer_width: 100,
+    footer_position_x: 0,
+    footer_position_y: 0,
+    overlay_color: '#ffffff',
   },
   footer_url: '',
   overlay: {
     text: '',
     position: 'bottom-center',
     text_size: 40,
+    color: '#ffffff',
   },
-  uploadStatus: 'idle', // idle | uploading | success | failed
+  uploadStatus: 'idle',
+  appliedTemplate: null,
 };
 
 const slice = createSlice({
@@ -37,6 +47,9 @@ const slice = createSlice({
     setUploadStatus(state, action) {
       state.uploadStatus = action.payload;
     },
+    setAppliedTemplate(state, action) {
+      state.appliedTemplate = action.payload;
+    },
   },
 });
 
@@ -45,6 +58,7 @@ export const {
   setFooter,
   setOverlay,
   setUploadStatus,
+  setAppliedTemplate,
 } = slice.actions;
 
 export default slice.reducer;

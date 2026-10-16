@@ -12,13 +12,12 @@ export const brandApi = apiClient.injectEndpoints({
       query: (body) => ({
         url: '/user/profile',
         method: 'POST',
-        body,
+        body,                       // ⭐ poora body pass hota hai — overlay_color bhi included
       }),
       invalidatesTags: ['Brand'],
     }),
 
     // ─── LOGO / FOOTER UPLOAD ───
-    // These use dedicated /user/profile/logo and /user/profile/footer endpoints
     uploadLogo: b.mutation({
       query: (file) => {
         const fd = new FormData();
@@ -46,7 +45,6 @@ export const brandApi = apiClient.injectEndpoints({
     }),
 
     // ⭐ GENERIC MEDIA UPLOAD
-    // Use this for post media (images/videos)
     uploadMedia: b.mutation({
       query: (file) => {
         const fd = new FormData();
@@ -64,7 +62,12 @@ export const brandApi = apiClient.injectEndpoints({
       query: (body) => ({
         url: '/media/user/profile/overlay',
         method: 'PUT',
-        body,
+        body: {
+          text: body.text,
+          position: body.position,
+          text_size: body.text_size,
+          color: body.color,          // ⭐ NEW — overlay text color (#RRGGBB)
+        },
       }),
       invalidatesTags: ['Brand'],
     }),
@@ -76,6 +79,6 @@ export const {
   useSaveProfileMutation,
   useUploadLogoMutation,
   useUploadFooterMutation,
-  useUploadMediaMutation,      // ⭐ NEW
+  useUploadMediaMutation,
   useUpdateOverlayMutation,
 } = brandApi;
